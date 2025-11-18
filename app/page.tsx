@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PlaylistInput from './components/PlaylistInput';
 import AlbumGrid from './components/AlbumGrid';
-import { getPlaylistAlbumArts, extractPlaylistId, AlbumArt } from '@/lib/spotify';
+import { getPlaylistAlbumArts, getPlaylistName, extractPlaylistId, AlbumArt } from '@/lib/spotify';
 
 export default function Home() {
   const [albums, setAlbums] = useState<AlbumArt[]>([]);
@@ -15,9 +15,10 @@ export default function Home() {
     setIsLoading(true);
     try {
       const playlistId = extractPlaylistId(input);
+      const playlistName = await getPlaylistName(playlistId);
       const albumArts = await getPlaylistAlbumArts(playlistId);
       setAlbums(albumArts);
-      setPlaylistName(input);
+      setPlaylistName(playlistName);
     } catch (error) {
       console.error('Error:', error);
       setAlbums([]);
@@ -70,7 +71,7 @@ export default function Home() {
         {albums.length > 0 && (
           <div className="mb-6 p-4 bg-green-900/20 border border-green-900/50 rounded-lg">
             <p className="text-green-400 font-semibold">
-              ✓ Loaded {albums.length} tracks
+              ✓ Loaded {albums.length} tracks from {playlistName}
             </p>
           </div>
         )}

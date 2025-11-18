@@ -135,6 +135,20 @@ export interface AlbumArt {
   spotifyUrl: string;
 }
 
+export async function getPlaylistName( playlistId: string): Promise<string> {
+  const token = await getAccessToken();
+  const response = await fetch(`${SPOTIFY_API_BASE}/playlists/${playlistId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch playlist details: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.name || 'Unknown Playlist';
+}
+
 export async function getPlaylistAlbumArts(
   playlistId: string
 ): Promise<AlbumArt[]> {
